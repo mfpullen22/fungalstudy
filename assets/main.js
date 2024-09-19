@@ -2145,6 +2145,14 @@
 		
 		};
 	
+	// Buttons: buttons02.
+		$('#buttons02 > li:nth-child(1) > a').addEventListener(
+			'click',
+			function(event) { 
+				gtag_report_conversion
+			}
+		);
+	
 	// Initialize "On Visible" animations.
 		onvisible.add('h1.style5, h2.style5, h3.style5, p.style5', { style: 'fade-up', speed: 1000, intensity: 0, threshold: 3, delay: 0, replay: false });
 		onvisible.add('h1.style2, h2.style2, h3.style2, p.style2', { style: 'fade-up', speed: 1000, intensity: 0, threshold: 3, delay: 0, replay: false });

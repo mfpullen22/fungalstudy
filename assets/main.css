@@ -542,6 +542,10 @@ h1.style6 span.p:nth-child(n + 2), h2.style6 span.p:nth-child(n + 2), h3.style6 
 	transform: scale(1.06);
 }
 
+#buttons02 .n01 {
+	cursor: pointer;
+}
+
 .container {
 	position: relative;
 }
