@@ -29,27 +29,38 @@
 					a = [
 						[
 							'firefox',
-							/Firefox\/([0-9\.]+)/
+							/Firefox\/([0-9\.]+)/,
+							null
 						],
 						[
 							'edge',
-							/Edge\/([0-9\.]+)/
+							/Edge\/([0-9\.]+)/,
+							null
 						],
 						[
 							'safari',
-							/Version\/([0-9\.]+).+Safari/
+							/Version\/([0-9\.]+).+Safari/,
+							null
 						],
 						[
 							'chrome',
-							/Chrome\/([0-9\.]+)/
+							/Chrome\/([0-9\.]+)/,
+							null
 						],
 						[
 							'chrome',
-							/CriOS\/([0-9\.]+)/
+							/CriOS\/([0-9\.]+)/,
+							null
 						],
 						[
 							'ie',
-							/Trident\/.+rv:([0-9]+)/
+							/Trident\/.+rv:([0-9]+)/,
+							null
+						],
+						[
+							'safari',
+							/iPhone OS ([0-9_]+)/,
+							function(v) { return v.replace('_', '.').replace('_', ''); }
 						]
 					];
 		
@@ -58,7 +69,7 @@
 						if (ua.match(a[i][1])) {
 		
 							o.browser = a[i][0];
-							o.browserVersion = parseFloat(RegExp.$1);
+							o.browserVersion = parseFloat( a[i][2] ? (a[i][2])(RegExp.$1) : RegExp.$1 );
 		
 							break;
 		
@@ -590,6 +601,13 @@
 				$body.classList.add('with-loader');
 			}, 500);
 		
+		// Create loader element.
+			var $loaderElement = document.createElement('div');
+				$loaderElement.id = 'loader';
+		
+			// Add to body.
+				$body.appendChild($loaderElement);
+		
 		// Create load handler.
 			var loadHandler = function() {
 				setTimeout(function() {
@@ -614,6 +632,11 @@
 		
 							// Mark as ready.
 								$body.classList.add('is-ready');
+		
+							// Remove loader element (after delay).
+								setTimeout(function() {
+									$body.removeChild($loaderElement);
+								}, 1000);
 		
 						}, 375);
 		
@@ -1416,99 +1439,213 @@
 					},
 				},
 				'wipe-up': {
-					type: 'transition',
-					transition: function (speed, delay) {
-						return	'mask-size ' + speed + 's ease' + (delay ? ' ' + delay + 's' : '');
+					type: 'animate',
+					keyframes: function(intensity) {
+		
+						return [
+							{
+								maskSize: '100% 0%',
+								maskImage: 'linear-gradient(90deg, black 100%, transparent 100%)',
+							},
+							{
+								maskSize: '110% 110%',
+								maskImage: 'linear-gradient(90deg, black 100%, transparent 100%)',
+							},
+						];
+		
 					},
-					rewind: function(intensity) {
+					options: function(speed) {
+		
+						return {
+							duration: speed,
+							iterations: 1,
+							easing: 'ease',
+						};
+		
+					},
+					rewind: function() {
+						this.style.opacity = 0;
 						this.style.maskComposite = 'exclude';
 						this.style.maskRepeat = 'no-repeat';
-						this.style.maskImage = 'linear-gradient(0deg, black 100%, transparent 100%)';
 						this.style.maskPosition = '0% 100%';
-						this.style.maskSize = '100% 0%';
 					},
 					play: function() {
-						this.style.maskSize = '110% 110%';
+						this.style.opacity = 1;
 					},
 				},
 				'wipe-down': {
-					type: 'transition',
-					transition: function (speed, delay) {
-						return	'mask-size ' + speed + 's ease' + (delay ? ' ' + delay + 's' : '');
+					type: 'animate',
+					keyframes: function(intensity) {
+		
+						return [
+							{
+								maskSize: '100% 0%',
+								maskImage: 'linear-gradient(90deg, black 100%, transparent 100%)',
+							},
+							{
+								maskSize: '110% 110%',
+								maskImage: 'linear-gradient(90deg, black 100%, transparent 100%)',
+							},
+						];
+		
 					},
-					rewind: function(intensity) {
+					options: function(speed) {
+		
+						return {
+							duration: speed,
+							iterations: 1,
+							easing: 'ease',
+						};
+		
+					},
+					rewind: function() {
+						this.style.opacity = 0;
 						this.style.maskComposite = 'exclude';
 						this.style.maskRepeat = 'no-repeat';
-						this.style.maskImage = 'linear-gradient(0deg, black 100%, transparent 100%)';
 						this.style.maskPosition = '0% 0%';
-						this.style.maskSize = '100% 0%';
 					},
 					play: function() {
-						this.style.maskSize = '110% 110%';
+						this.style.opacity = 1;
 					},
 				},
 				'wipe-left': {
-					type: 'transition',
-					transition: function (speed, delay) {
-						return	'mask-size ' + speed + 's ease' + (delay ? ' ' + delay + 's' : '');
+					type: 'animate',
+					keyframes: function(intensity) {
+		
+						return [
+							{
+								maskSize: '0% 100%',
+								maskImage: 'linear-gradient(90deg, black 100%, transparent 100%)',
+							},
+							{
+								maskSize: '110% 110%',
+								maskImage: 'linear-gradient(90deg, black 100%, transparent 100%)',
+							},
+						];
+		
 					},
-					rewind: function(intensity) {
+					options: function(speed) {
+		
+						return {
+							duration: speed,
+							iterations: 1,
+							easing: 'ease',
+						};
+		
+					},
+					rewind: function() {
+						this.style.opacity = 0;
 						this.style.maskComposite = 'exclude';
 						this.style.maskRepeat = 'no-repeat';
-						this.style.maskImage = 'linear-gradient(90deg, black 100%, transparent 100%)';
 						this.style.maskPosition = '100% 0%';
-						this.style.maskSize = '0% 100%';
 					},
 					play: function() {
-						this.style.maskSize = '110% 110%';
+						this.style.opacity = 1;
 					},
 				},
 				'wipe-right': {
-					type: 'transition',
-					transition: function (speed, delay) {
-						return	'mask-size ' + speed + 's ease' + (delay ? ' ' + delay + 's' : '');
+					type: 'animate',
+					keyframes: function(intensity) {
+		
+						return [
+							{
+								maskSize: '0% 100%',
+								maskImage: 'linear-gradient(90deg, black 100%, transparent 100%)',
+							},
+							{
+								maskSize: '110% 110%',
+								maskImage: 'linear-gradient(90deg, black 100%, transparent 100%)',
+							},
+						];
+		
 					},
-					rewind: function(intensity) {
+					options: function(speed) {
+		
+						return {
+							duration: speed,
+							iterations: 1,
+							easing: 'ease',
+						};
+		
+					},
+					rewind: function() {
+						this.style.opacity = 0;
 						this.style.maskComposite = 'exclude';
 						this.style.maskRepeat = 'no-repeat';
-						this.style.maskImage = 'linear-gradient(90deg, black 100%, transparent 100%)';
 						this.style.maskPosition = '0% 0%';
-						this.style.maskSize = '0% 100%';
 					},
 					play: function() {
-						this.style.maskSize = '110% 110%';
+						this.style.opacity = 1;
 					},
 				},
 				'wipe-diagonal': {
-					type: 'transition',
-					transition: function (speed, delay) {
-						return	'mask-size ' + speed + 's ease' + (delay ? ' ' + delay + 's' : '');
+					type: 'animate',
+					keyframes: function(intensity) {
+		
+						return [
+							{
+								maskSize: '0% 0%',
+								maskImage: 'linear-gradient(45deg, black 50%, transparent 50%)',
+							},
+							{
+								maskSize: '220% 220%',
+								maskImage: 'linear-gradient(45deg, black 50%, transparent 50%)',
+							},
+						];
+		
 					},
-					rewind: function(intensity) {
+					options: function(speed) {
+		
+						return {
+							duration: speed,
+							iterations: 1,
+							easing: 'ease',
+						};
+		
+					},
+					rewind: function() {
+						this.style.opacity = 0;
 						this.style.maskComposite = 'exclude';
 						this.style.maskRepeat = 'no-repeat';
-						this.style.maskImage = 'linear-gradient(45deg, black 50%, transparent 50%)';
 						this.style.maskPosition = '0% 100%';
-						this.style.maskSize = '0% 0%';
 					},
 					play: function() {
-						this.style.maskSize = '220% 220%';
+						this.style.opacity = 1;
 					},
 				},
 				'wipe-reverse-diagonal': {
-					type: 'transition',
-					transition: function (speed, delay) {
-						return	'mask-size ' + speed + 's ease' + (delay ? ' ' + delay + 's' : '');
+					type: 'animate',
+					keyframes: function(intensity) {
+		
+						return [
+							{
+								maskSize: '0% 0%',
+								maskImage: 'linear-gradient(135deg, transparent 50%, black 50%)',
+							},
+							{
+								maskSize: '220% 220%',
+								maskImage: 'linear-gradient(135deg, transparent 50%, black 50%)',
+							},
+						];
+		
 					},
-					rewind: function(intensity) {
+					options: function(speed) {
+		
+						return {
+							duration: speed,
+							iterations: 1,
+							easing: 'ease',
+						};
+		
+					},
+					rewind: function() {
+						this.style.opacity = 0;
 						this.style.maskComposite = 'exclude';
 						this.style.maskRepeat = 'no-repeat';
-						this.style.maskImage = 'linear-gradient(135deg, transparent 50%, black 50%)';
 						this.style.maskPosition = '100% 100%';
-						this.style.maskSize = '0% 0%';
 					},
 					play: function() {
-						this.style.maskSize = '220% 220%';
+						this.style.opacity = 1;
 					},
 				},
 				'pop-in': {
